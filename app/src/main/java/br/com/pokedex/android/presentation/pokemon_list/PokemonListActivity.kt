@@ -3,18 +3,15 @@ package br.com.pokedex.android.presentation.pokemon_list
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.remember
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import br.com.pokedex.android.presentation.pokemon_list.components.PokemonListScreen
+import br.com.pokedex.android.presentation.ui.theme.PokedexTheme
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class PokemonListActivity : ComponentActivity() {
@@ -22,40 +19,35 @@ class PokemonListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PokemonList()
-        }
-    }
-}
-
-@Composable
-fun PokemonList(
-    viewModel: PokemonListViewModel = hiltViewModel()
-) {
-    when (val uiState = viewModel.uiState.collectAsState().value) {
-        is PokemonListState.EmptyState -> {
-
-        }
-        is PokemonListState.Error -> {
-            Text(text = "Error")
-        }
-        is PokemonListState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier,
-                )
-            }
-        }
-        is PokemonListState.Success -> {
-            val pokemonsData = uiState.pokemonList
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(pokemonsData.results.size) {
-                    Text(text = pokemonsData.results[it].name)
+            PokedexTheme {
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "pokemon_list_screen"
+                ) {
+                    composable(route = "pokemon_list_screen") {
+                        PokemonListScreen()
+                    }
+                    composable(
+                        route = "pokemon_details/{dominantColor}/{pokemonName}",
+                        arguments = listOf(
+                            navArgument(name = "dominantColor") {
+                                type = NavType.IntType
+                            },
+                            navArgument(name = "pokemonName") {
+                                type = NavType.StringType
+                            }
+                        )
+                    ) {
+                        val dominantColor = remember {
+                            it.arguments?.getInt("dominantColor")
+                        }
+                        val pokemonName = remember {
+                            it.arguments?.getString("pokemonName")
+                        }
+                    }
                 }
             }
         }
     }
-
 }

@@ -2,8 +2,7 @@ package br.com.pokedex.android.presentation.pokemon_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import br.com.pokedex.android.data.Resource
-import br.com.pokedex.android.data.service.responses.PokemonData
+import br.com.pokedex.android.domain.repository.GetPokemonListResult
 import br.com.pokedex.android.domain.repository.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,24 +23,17 @@ class PokemonListViewModel @Inject constructor(
         getPokemonList()
     }
 
-    fun getPokemonList() {
+    private fun getPokemonList(limit: Int = 100, offset: Int = 20) {
         viewModelScope.launch {
             _uiState.value = PokemonListState.Loading
-            pokemonRepository.getPokemonList().collect { resource ->
-                when (resource) {
-                    is Resource.Error -> _uiState.value = PokemonListState.Error
-                    is Resource.Sucess -> {
-                        try {
-                            val pokemonsData = resource.data as PokemonData
-                            _uiState.value = PokemonListState.Success(pokemonsData)
-                        }
-                        catch (e: java.lang.Exception) {
-                            _uiState.value = PokemonListState.Error
-                        }
-                    }
+            when (val pokemonListResult = pokemonRepository.getPokemonList(limit, offset)) {
+                is GetPokemonListResult.Error -> {
+                    _uiState.value = PokemonListState.Error
+                }
+                is GetPokemonListResult.Success -> {
+                    _uiState.value = PokemonListState.Success(pokemonListResult.pokemonList)
                 }
             }
         }
     }
-
 }

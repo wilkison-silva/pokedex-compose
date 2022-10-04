@@ -1,12 +1,9 @@
 package br.com.pokedex.android.domain.repository
 
-import br.com.pokedex.android.data.Resource
-import kotlinx.coroutines.flow.Flow
-
 interface PokemonRepository {
 
-    fun getPokemonList(): Flow<Resource>
+    suspend fun getPokemonList(limit: Int, offset: Int): GetPokemonListResult
 
-    fun getPokemonDetailsByName(name: String): Flow<Resource>
+    suspend fun getPokemonDetailsByName(name: String): GetPokemonResult
 
 }
