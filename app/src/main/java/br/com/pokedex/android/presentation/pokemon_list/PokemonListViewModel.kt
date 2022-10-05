@@ -3,6 +3,7 @@ package br.com.pokedex.android.presentation.pokemon_list
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,6 +26,9 @@ class PokemonListViewModel @Inject constructor(
     private val _pokemonListState: MutableStateFlow<PokemonListState> =
         MutableStateFlow(PokemonListState.EmptyState)
     val pokemonListState = _pokemonListState.asStateFlow()
+
+    //Usado somente para testar como funciona com o mutableStateOf
+    val mutablestateof = mutableStateOf<PokemonListState>(PokemonListState.EmptyState)
 
     private val _endPageReached = MutableStateFlow(false)
     val endPageReached = _endPageReached.asStateFlow()
@@ -78,6 +82,7 @@ class PokemonListViewModel @Inject constructor(
                     pokemonItemViewList += currentPokemonList
 
                     _pokemonListState.value = PokemonListState.Success(pokemonItemViewList)
+                    mutablestateof.value = PokemonListState.Success(pokemonItemViewList)
                 }
             }
         }
