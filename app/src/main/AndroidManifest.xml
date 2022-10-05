@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Pokedex"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.pokemon_list.PokemonListActivity"
+            android:name=".presentation.PokemonListActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Pokedex">

@@ -1,4 +1,4 @@
-package br.com.pokedex.android.presentation.pokemon_list
+package br.com.pokedex.android.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,7 +26,7 @@ class PokemonListActivity : ComponentActivity() {
                     startDestination = "pokemon_list_screen"
                 ) {
                     composable(route = "pokemon_list_screen") {
-                        PokemonListScreen()
+                        PokemonListScreen(navController = navController)
                     }
                     composable(
                         route = "pokemon_details/{dominantColor}/{pokemonName}",
