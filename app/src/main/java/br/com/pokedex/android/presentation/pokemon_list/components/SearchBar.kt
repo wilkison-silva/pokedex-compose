@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ fun SearchBar(
             onValueChange = {
                 text = it
                 onSearch(it)
+                isHintDisplayed = it.isEmpty()
             },
             maxLines = 1,
             singleLine = true,
@@ -44,9 +46,6 @@ fun SearchBar(
                 .shadow(elevation = 5.dp, shape = CircleShape)
                 .background(color = Color.White, shape = CircleShape)
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .onFocusChanged {
-                    isHintDisplayed = it.isFocused == false && text.isBlank()
-                }
         )
         if (isHintDisplayed) {
             Text(
