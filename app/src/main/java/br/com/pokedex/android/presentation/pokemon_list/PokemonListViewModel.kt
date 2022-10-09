@@ -3,8 +3,10 @@ package br.com.pokedex.android.presentation.pokemon_list
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
@@ -16,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +39,9 @@ class PokemonListViewModel @Inject constructor(
     private var currentPage = 0
 
     private var pokemonItemViewList = listOf<PokemonItemView>()
+
+    private val _isSearchingState = MutableStateFlow(false)
+    val isSearchingState = _isSearchingState.asStateFlow()
 
     init {
         getPokemonList()
@@ -73,7 +79,11 @@ class PokemonListViewModel @Inject constructor(
                             val url =
                                 "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
                             PokemonItemView(
-                                pokemonName = result.name,
+                                pokemonName = result.name.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.ROOT
+                                    ) else it.toString()
+                                },
                                 imageURL = url,
                                 number = number.toInt()
                             )
@@ -87,4 +97,18 @@ class PokemonListViewModel @Inject constructor(
             }
         }
     }
+
+    fun searchByName(name: String) {
+        if (name.isNotBlank()) {
+            val result = pokemonItemViewList.filter {
+                it.pokemonName.startsWith(prefix = name, ignoreCase = true)
+            }
+            _pokemonListState.value = PokemonListState.Success(result)
+            _isSearchingState.value = true
+        } else {
+            _pokemonListState.value = PokemonListState.Success(pokemonItemViewList)
+            _isSearchingState.value = false
+        }
+    }
+
 }

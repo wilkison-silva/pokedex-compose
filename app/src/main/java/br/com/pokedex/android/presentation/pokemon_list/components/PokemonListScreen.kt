@@ -28,6 +28,7 @@ fun PokemonListScreen(
 ) {
     val endReached = viewModel.endPageReached.collectAsState().value
     val uiState = viewModel.pokemonListState.collectAsState().value
+    val isSearching = viewModel.isSearchingState.collectAsState().value
 
     Surface(
         color = MaterialTheme.colors.background,
@@ -49,7 +50,7 @@ fun PokemonListScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-
+                viewModel.searchByName(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
             when (uiState) {
@@ -79,7 +80,7 @@ fun PokemonListScreen(
                             uiState.pokemonItemViewList.size / 2 + 1
                         }
                         items(itemCount) {
-                            if (it >= itemCount - 1 && !endReached) {
+                            if (it >= itemCount - 1 && !endReached && !isSearching) {
                                 viewModel.getPokemonList()
                             }
                             PokedexRow(
