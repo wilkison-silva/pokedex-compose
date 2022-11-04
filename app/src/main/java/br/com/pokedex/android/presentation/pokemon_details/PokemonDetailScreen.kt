@@ -143,14 +143,16 @@ fun PokemonDetailTopSection(
     ) {
         Icon(
             modifier = Modifier
-                .size(36.dp)
-                .offset(x = 16.dp, y = 16.dp)
+                .size(48.dp)
+                .offset(x = 16.dp, y = 26.dp)
+                .clip(shape = CircleShape)
                 .clickable {
                     navController.popBackStack()
-                },
+                }
+                .padding(4.dp),
             imageVector = Icons.Default.ArrowBack,
             contentDescription = null,
-            tint = Color.White
+            tint = Color.White,
         )
     }
 }
