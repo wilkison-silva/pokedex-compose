@@ -8,7 +8,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -90,57 +89,6 @@ fun PokemonListScreen(
                             )
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun TesteComMutableStateOf(
-    viewModel: PokemonListViewModel = hiltViewModel(),
-    navController: NavController
-) {
-    val endReached = viewModel.endPageReached.collectAsState().value
-    val state = remember {
-        viewModel.mutablestateof
-    }
-
-    when (val stateValue = state.value) {
-        is PokemonListState.EmptyState -> {
-
-        }
-        is PokemonListState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error",
-                    modifier = Modifier,
-                )
-            }
-        }
-        is PokemonListState.Success -> {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-            ) {
-                val itemCount = if (stateValue.pokemonItemViewList.size % 2 == 0) {
-                    stateValue.pokemonItemViewList.size / 2
-                } else {
-                    stateValue.pokemonItemViewList.size / 2 + 1
-                }
-                items(itemCount) {
-                    if (it >= itemCount - 1 && !endReached) {
-                        viewModel.getPokemonList()
-                    }
-                    PokedexRow(
-                        rowIndex = it,
-                        pokemonItemViewsList = stateValue.pokemonItemViewList,
-                        navController = navController
-                    )
                 }
             }
         }

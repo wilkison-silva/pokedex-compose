@@ -3,10 +3,7 @@ package br.com.pokedex.android.presentation.pokemon_list
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.capitalize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
@@ -18,7 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,9 +26,6 @@ class PokemonListViewModel @Inject constructor(
     private val _pokemonListState: MutableStateFlow<PokemonListState> =
         MutableStateFlow(PokemonListState.EmptyState)
     val pokemonListState = _pokemonListState.asStateFlow()
-
-    //Usado somente para testar como funciona com o mutableStateOf
-    val mutablestateof = mutableStateOf<PokemonListState>(PokemonListState.EmptyState)
 
     private val _endPageReached = MutableStateFlow(false)
     val endPageReached = _endPageReached.asStateFlow()
@@ -70,7 +64,7 @@ class PokemonListViewModel @Inject constructor(
                     _endPageReached.value =
                         currentPage * PAGE_SIZE >= pokemonListResult.pokemonList.count
                     val currentPokemonList =
-                        pokemonListResult.pokemonList.results.mapIndexed { index, result ->
+                        pokemonListResult.pokemonList.results.map { result ->
                             val number = if (result.url.endsWith("/")) {
                                 result.url.dropLast(1).takeLastWhile { it.isDigit() }
                             } else {
@@ -80,9 +74,8 @@ class PokemonListViewModel @Inject constructor(
                                 "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
                             PokemonItemView(
                                 pokemonName = result.name.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.ROOT
-                                    ) else it.toString()
+                                    if (it.isLowerCase()) it.titlecase(Locale.ROOT)
+                                    else it.toString()
                                 },
                                 imageURL = url,
                                 number = number.toInt()
@@ -92,7 +85,6 @@ class PokemonListViewModel @Inject constructor(
                     pokemonItemViewList += currentPokemonList
 
                     _pokemonListState.value = PokemonListState.Success(pokemonItemViewList)
-                    mutablestateof.value = PokemonListState.Success(pokemonItemViewList)
                 }
             }
         }
